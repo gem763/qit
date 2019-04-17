@@ -1,0 +1,28 @@
+<div style="background:white;position:fixed;top:0;width:100%;height:80px;display:flex;align-items:center;justify-content:center;z-index:100;box-shadow: 0 0 10px rgba(0,0,0,0.2)">
+  <div class="ui text center aligned container" style="background:none">
+    <div class="ui secondary icon compact menu" style="background:none;height:80px;width:100%;">
+      <a class="item" style="padding:10px;" href="{% url 'dashboard' %}" id="logo">
+
+        <h3 class="ui header">
+          <i class="asterisk large icon" id="logoicon"></i>
+          <div class="content">
+            QIT Backtester
+            <div class="sub header" style="text-align:center">prototype</div>
+          </div>
+        </h3>
+
+      </a>
+
+      <div class="right menu">
+        <a class="ui item {{ discover_act }}" href="" style="border-radius:5px;margin:1px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;">
+          <i class="check square outline large icon" style="background:none;"></i>
+        </a>
+
+        <a class="ui item {{ rating_act }}" href="" style="border-radius:5px;margin:1px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;">
+          <i class="code large icon"></i>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <title>QIT</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="/static/semantic/semantic.min.css">
+</head>
+
+<body style="background:whitesmoke">
+  {% include "backtester/header.html" %}
+  {% include "backtester/content.html" %}
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+  <script src="/static/semantic/semantic.min.js"></script>
+
+  <script>
+    $("#logo").mouseover(function() {
+      $("#logoicon").attr("class", "asterisk large loading icon");
+    });
+
+    $("#logo").mouseout(function() {
+      $("#logoicon").attr("class", "asterisk large icon");
+    });
+
+    new Chart('nav', {
+        type: 'line',
+        data: {
+          labels: [1,2,3,4,5],
+          datasets: [{
+            label: 'Strategy',
+            data: [1,5,4,2,6],
+            borderColor: '#21BA45',
+          }],
+        },
+        options: {
+          elements: {
+            point: { radius: 0 },
+            line: { fill: false },
+          },
+          scales: {
+            xAxes: [{
+              gridLines: { display: false },
+            }],
+            yAxes: [{
+              ticks: {
+                min: 0,
+              },
+              gridLines: { display: false },
+            }],
+          },
+          legend: { display: false }, 
+          // scale: {
+          //   ticks: {
+          //     min: 0,
+          //     max: 100,
+          //     stepSize: 100,
+          //     display: false
+          //   },
+          //   gridLines: {
+          //     circular: true
+          //   }
+          // },
+          // legend: {
+          //   display: false
+          // }
+        }
+    });
+  </script>
+</body>
+</html>
