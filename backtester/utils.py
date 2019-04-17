@@ -103,7 +103,7 @@ class Backtest:
         return nav_prev * pos_update.sum()
 
     def navs(self):
-        return pd.DataFrame({'Strategy':self.nav, 'BM':self.nav_bm})
+        return pd.DataFrame({'Model':self.nav, 'BM':self.nav_bm})
 
     def plot_perf(self):
         self.navs().plot()

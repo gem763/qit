@@ -30,8 +30,8 @@
         data: {
           labels: {{ results.dates | safe }},
           datasets: [{
-            label: 'Strategy',
-            data: {{ results.navs_strat }},
+            label: 'Model',
+            data: {{ results.navs_model }},
             borderColor: 'orange',
           }, {
             label: 'BM',
@@ -42,7 +42,7 @@
         options: {
           elements: {
             point: { radius: 0 },
-            line: { fill: false },
+            line: { fill: false, tension: 0 },
           },
           scales: {
             xAxes: [{
@@ -60,21 +60,12 @@
               gridLines: { display: false },
             }],
           },
-          legend: { display: false },
-          // scale: {
-          //   ticks: {
-          //     min: 0,
-          //     max: 100,
-          //     stepSize: 100,
-          //     display: false
-          //   },
-          //   gridLines: {
-          //     circular: true
-          //   }
-          // },
-          // legend: {
-          //   display: false
-          // }
+          legend: {
+            display: true,
+            labels: {
+              // boxWidth: 100,
+            },
+          },
         }
     });
   </script>
