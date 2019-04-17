@@ -28,11 +28,15 @@
     new Chart('nav', {
         type: 'line',
         data: {
-          labels: [1,2,3,4,5],
+          labels: {{ results.dates | safe }},
           datasets: [{
             label: 'Strategy',
-            data: [1,5,4,2,6],
-            borderColor: '#21BA45',
+            data: {{ results.navs_strat }},
+            borderColor: 'orange',
+          }, {
+            label: 'BM',
+            data: {{ results.navs_bm }},
+            borderColor: 'black',
           }],
         },
         options: {
@@ -42,16 +46,21 @@
           },
           scales: {
             xAxes: [{
+              type: 'time',
+              time: {
+                unit:'year',
+                displayFormats: { year:'YYYY' },
+              },
               gridLines: { display: false },
             }],
             yAxes: [{
               ticks: {
-                min: 0,
+                min: {{ results.navs_min }},
               },
               gridLines: { display: false },
             }],
           },
-          legend: { display: false }, 
+          legend: { display: false },
           // scale: {
           //   ticks: {
           //     min: 0,
