@@ -13,7 +13,7 @@ mc = pd.read_pickle(mc_path)
 
 
 def run_backtest():
-    bt = Backtest(strat=mcTopLowPB, bm=BM, fin=fin, mc=mc, n=10)
+    bt = Backtest(strat=mcTopLowPB, bm=BM, fin=fin, mc=mc, info=info, n=10)
     bt.run()
     return bt
 
@@ -62,11 +62,12 @@ def BM(date, fin=None, mc=None, n=200):
 
 
 class Backtest:
-    def __init__(self, strat=None, bm=None, fin=None, mc=None, n=10):
+    def __init__(self, strat=None, bm=None, fin=None, mc=None, info=None, n=10):
         self.strat = strat
         self.bm = bm
         self.fin = fin
         self.mc = mc
+        self.info = info
         self.n = n
 
     def run(self):
@@ -113,7 +114,7 @@ class Backtest:
         days_all = (_navs.index[-1]-_navs.index[0]).days
         ann_rtn = (_navs.iloc[-1]**(365/days_all))-1
         vol = _navs.pct_change().std() * 4**0.5
-        return pd.DataFrame({'연수익률':ann_rtn, '변동성':vol, '샤프':ann_rtn/vol})
+        return pd.DataFrame({'Annual return':ann_rtn, 'Volatility':vol, 'Sharpe':ann_rtn/vol})
 
     def position(self, date=None, what='strat'):
         if what=='strat':
@@ -125,3 +126,8 @@ class Backtest:
             return pd.DataFrame(pos).T
         else:
             return pos[pd.Timestamp(date)]
+
+    def position_mapped(self):
+        pos_kr = self.position().rename(columns=self.info['name'].to_dict())*100
+        # print(pos_kr)
+        return {str(k.date()):pos_kr.loc[k].dropna().to_dict() for k in pos_kr.index}

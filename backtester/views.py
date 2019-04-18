@@ -10,6 +10,9 @@ def dashboard(request):
     navs_model = list(navs['Model'].values)
     navs_bm = list(navs['BM'].values)
     navs_min = max(round(navs.min().min(), 1) - 0.1, 0)
+    stats = bt.stats().T.to_dict('split')
     dates = list(navs.index.date.astype(str))
-    results = {'navs_model':navs_model, 'navs_bm':navs_bm, 'dates':dates, 'navs_min':navs_min}
+    pos = bt.position_mapped()
+    # print(pos)
+    results = {'navs_model':navs_model, 'navs_bm':navs_bm, 'dates':dates, 'navs_min':navs_min, 'stats':stats, 'pos':pos}
     return render(request, 'backtester/dashboard.html', {'results':results})

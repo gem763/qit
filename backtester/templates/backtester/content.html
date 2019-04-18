@@ -32,35 +32,50 @@
   <div class="ui padded segment">
     <div class="ui header">Stats</div>
     <div class="content">
-      <div class="ui three stackable cards">
-        <div class="card">
-          <div class="content">
-            <div class="header">
-              Annual return
-            </div>
-            <div class="description">
-              <table class="ui very basic fixed selectable unstackable very compact table">
-                <tbody>
-                  <tr>
-                    <td class="right aligned eight wide">1</td>
-                    <td class="eight wide" style="padding:0px;background:yellow;">
-                      <button class="ui green mini compact right aligned button" style="width:100%;border-radius:0 20px 20px 0">
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>2</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+
+      <div class="ui three column stackable grid container">
+        <div class="column" style="text-align:center;">
+          <div class="ui small header">
+            Annual return
           </div>
+          <canvas id="Annual return" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto"></canvas>
         </div>
 
-        <div class="card">Volatility</div>
-        <div class="card">Sharpe</div>
+        <div class="column" style="text-align:center;">
+          <div class="ui small header">
+            Volatility
+          </div>
+          <canvas id="Volatility" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto"></canvas>
+        </div>
+
+        <div class="column" style="text-align:center;">
+          <div class="ui small header">
+            Sharpe
+          </div>
+          <canvas id="Sharpe" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto"></canvas>
+        </div>
       </div>
+
+    </div>
+  </div>
+
+
+  <div class="ui padded segment">
+    <div class="ui header">Positions</div>
+
+    <div class="ui compact floating scrolling dropdown button">
+      <span class="text">Rebalancing</span>
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        {% for date in results.dates %}
+          <div class="item">{{ date }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="content" style="margin-top:10px;">
+      <table class="ui basic fixed selectable unstackable very compact collapsing table" id="position">
+      </table>
     </div>
   </div>
 

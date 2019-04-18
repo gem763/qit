@@ -17,6 +17,51 @@
   <script src="/static/semantic/semantic.min.js"></script>
 
   <script>
+    var stats = {{ results.stats | safe }};
+    var stats_names = stats.index;
+    var strats = stats.columns;
+    var stats_data = stats.data;
+    var pos = {{ results.pos | safe }};
+
+    $(".ui.dropdown").dropdown({
+      direction: 'upward',
+      onChange: function(value, text, $selectedItem) {
+        $("#position").empty();
+        var thead = document.createElement('thead');
+
+        var th_name = document.createElement('th');
+        th_name.className = "eight wide";
+        th_name.append('Name');
+
+        var th_weight = document.createElement('th');
+        th_weight.className = "right aligned eight wide";
+        th_weight.append('Weight(%)');
+
+        var tr_head = document.createElement('tr');
+        tr_head.append(th_name, th_weight);
+        thead.append(tr_head);
+
+        var tbody = document.createElement('tbody');
+
+        $.each(pos[value], function(index, value) {
+          var td_name = document.createElement('td');
+          td_name.className = "eight wide";
+          td_name.append(index);
+
+          var td_weight = document.createElement('td');
+          td_weight.className = "right aligned eight wide";
+          td_weight.append(value)
+
+          var tr = document.createElement('tr');
+          tr.append(td_name, td_weight);
+
+          tbody.append(tr);
+        });
+
+        $("#position").append(thead, tbody);
+      }
+    });
+
     $("#logo").mouseover(function() {
       $("#logoicon").attr("class", "asterisk large loading icon");
     });
@@ -68,6 +113,38 @@
           },
         }
     });
+
+
+    for(var i=0; i<stats_names.length; i++) {
+      new Chart(stats_names[i], {
+          type: 'bar',
+          data: {
+            labels: strats,
+            datasets: [{
+              data: stats_data[i],
+              backgroundColor: ['orange', 'black'],
+              borderWidth: 0,
+            }],
+          },
+          options: {
+            scales: {
+              xAxes: [{
+                gridLines: { display: false },
+              }],
+              yAxes: [{
+                ticks: {
+                  min: 0,
+                },
+                display: false,
+                gridLines: { display: false },
+              }],
+            },
+            legend: {
+              display: false,
+            },
+          }
+      });
+    }
   </script>
 </body>
 </html>
