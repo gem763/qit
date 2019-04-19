@@ -12,8 +12,8 @@ fin = pd.read_pickle(fin_path)
 mc = pd.read_pickle(mc_path)
 
 
-def run_backtest():
-    bt = Backtest(strat=mcTopLowPB, bm=BM, fin=fin, mc=mc, info=info, n=10)
+def backtest(model, n):
+    bt = Backtest(strat=model, bm=BM, fin=fin, mc=mc, info=info, n=n)
     bt.run()
     return bt
 
@@ -29,21 +29,21 @@ def get_fisyear(date):
         return date.year - 2
 
 
-def salesTop10(date, fin=None, mc=None, n=10):
+def 매출상위(date, fin=None, mc=None, n=10):
     fisyear = get_fisyear(date)
     position = fin['매출액'].xs(fisyear, level=1).nlargest(n)
     position[:] = 1/len(position)
     return position
 
 
-def salesTop10_2(date, fin=None, mc=None, n=10):
+def 매출상위다시(date, fin=None, mc=None, n=10):
     fisyear = get_fisyear(date)
     univ = mc.columns[mc.loc[date]>0]
     position = fin['매출액'].xs(fisyear, level=1).loc[univ].nlargest(n)
     position[:] = 1/len(position)
     return position
 
-def mcTopLowPB(date, fin=None, mc=None, n=10):
+def 시총상위PB저평가(date, fin=None, mc=None, n=10):
     fisyear = get_fisyear(date)
     marketcap = mc.loc[date].nlargest(100)
     univ = marketcap.index
