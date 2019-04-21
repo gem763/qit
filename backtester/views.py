@@ -3,6 +3,7 @@ from django.views.generic import View
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from backtester.utils import backtest, 매출상위, 매출상위다시, 시총상위PB저평가
+import inspect
 
 
 model_matcher = {
@@ -27,6 +28,14 @@ def get_results(model, n):
     pos = bt.position_mapped()
     results = {'navs_model':navs_model, 'navs_bm':navs_bm, 'dates':dates, 'navs_min':navs_min, 'stats':stats, 'pos':pos}
     return results
+
+class GetSourceView(View):
+    def get(self, request):
+        model_id = request.GET.get('model_id', None)
+
+        if model_id is not None:
+            source = inspect.getsource(model_matcher[int(model_id)]['model'])
+            return JsonResponse({'source':source})
 
 
 class RunBacktestView(View):

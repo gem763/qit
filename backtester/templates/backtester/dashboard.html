@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="/static/semantic/semantic.min.css">
+  <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
 </head>
 
 <body style="background:whitesmoke">
@@ -13,8 +14,11 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script> -->
   <script src="/static/semantic/semantic.min.js"></script>
+  <script src="/static/codemirror/lib/codemirror.js"></script>
+  <script src="/static/codeMirror/mode/python/python.js"></script>
+  <script src="/static/codeMirror/addon/display/autorefresh.js"></script>
 
   <script>
     $("#logo").mouseover(function() {
@@ -25,12 +29,44 @@
       $("#logoicon").attr("class", "asterisk large icon");
     });
 
-    $("#modelselector").dropdown();
-    // {
-    //   onChange: function(value, text, $selectedItem) {
-    //     console.log($selectedItem.attr("data-value"));
-    //   }
-    // });
+    $('.ui.accordion').accordion({
+      onChanging: function() {
+        // $("#editcode").css("opacity", 0);
+      }
+    });
+
+    $("#modelselector").dropdown({
+      onChange: function(value, text, $selectedItem) {
+        var model_id = $("#modelselector").dropdown("get value");
+
+        if (model_id!="") {
+          var data = { model_id: model_id };
+
+          $.ajax({
+            url: '{% url "get_source" %}',
+            async: true,
+            type: 'GET',
+            data: data,
+            dataType: 'json',
+            success: function(data) {
+              $("#source").empty()
+              var where = document.getElementById("source");
+              var myCodeMirror = CodeMirror(where, {
+                value: data.source,
+                readOnly: 'nocursor',
+                autoRefresh: true
+              });
+            }
+          });
+
+          // var textarea = document.getElementById("code");
+          // var myCodeMirror = CodeMirror.fromTextArea(textarea, {
+          //   autoRefresh: true
+          // });
+        }
+      }
+    });
+
 
     $("#run").click(function() {
       var model_id = $("#modelselector").dropdown("get value");

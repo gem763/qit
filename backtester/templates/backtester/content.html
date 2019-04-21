@@ -2,6 +2,27 @@
   #run:hover {
     background: whitesmoke !important;
   }
+
+  .CodeMirror {
+    /* border: 1px solid red; */
+    height: auto;
+    padding: 10px;
+  }
+
+  #editcode {
+    background: transparent;
+    opacity: 0 !important;
+    transition: opacity 0.5s;
+  }
+
+  #editcode:hover {
+    background: rgba(220, 220, 220, .2);
+    opacity: 1 !important;
+  }
+
+  #source:hover + #editcode {
+    opacity: 1 !important;
+  }
 </style>
 
 <div class="ui text container segments" style="margin-top:100px;">
@@ -34,21 +55,19 @@
           </div>
         </div>
 
-        <div class="field">
-          <pre class="prettyprint" style="padding:10px;">
 
-Codemirror 사용하자
-
-def 시총상위PB저평가(date, fin=None, mc=None, n=10):
-    fisyear = get_fisyear(date)
-    marketcap = mc.loc[date].nlargest(100)
-    univ = marketcap.index
-    bv = fin['자본총계'].xs(fisyear, level=1).loc[univ]
-    bp = bv / marketcap
-    position = bp.nlargest(n)
-    position[:] = 1/len(position)
-    return position
-          </pre>
+        <div class="ui fluid accordion field">
+          <div class="title">
+            <i class="dropdown icon"></i>
+            Show code
+          </div>
+          <div class="content field" style="position:relative">
+            <div style="background:whitesmoke;padding:10px" id="source">
+            </div>
+            <div class="ui icon button" style="position:absolute;top:30px;right:20px;z-index:50;" id="editcode">
+              <i class="large code icon"></i>
+            </div>
+          </div>
         </div>
 
         <div class="ui compact right floated button" style="background:white" id="run">
