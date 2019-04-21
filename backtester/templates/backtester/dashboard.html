@@ -21,6 +21,37 @@
   <script src="/static/codeMirror/addon/display/autorefresh.js"></script>
 
   <script>
+    $("#chooser").click(function() {
+      $("#chooser").attr("class", "ui item active");
+      $("#coder").attr("class", "ui item");
+
+      $("#chooser_mode").css("display", "block");
+      $("#coder_mode").css("display", "none");
+
+      $("#results").css("display", "none");
+    });
+
+    $("#coder").click(function() {
+      $("#chooser").attr("class", "ui item");
+      $("#coder").attr("class", "ui item active");
+
+      $("#chooser_mode").css("display", "none");
+      $("#coder_mode").css("display", "block");
+
+      $("#results").css("display", "none");
+
+      $("#mysource").empty();
+      var where = document.getElementById("mysource");
+      var myCodeMirror = CodeMirror(where, {
+        value: "# Type your code here\ndef myModel(date, fin=None, mc=None, n=10):\n    ",
+        // autoRefresh: true
+      });
+      myCodeMirror.focus();
+      myCodeMirror.setCursor(myCodeMirror.lineCount(), 0);
+
+      // console.log(myCodeMirror.getValue());
+    });
+
     $("#logo").mouseover(function() {
       $("#logoicon").attr("class", "asterisk large loading icon");
     });
@@ -49,32 +80,36 @@
             data: data,
             dataType: 'json',
             success: function(data) {
-              $("#source").empty()
+              $("#source").empty();
               var where = document.getElementById("source");
               var myCodeMirror = CodeMirror(where, {
                 value: data.source,
                 readOnly: 'nocursor',
-                autoRefresh: true
+                autoRefresh: true,
+                // lineNumbers: true
               });
             }
           });
-
-          // var textarea = document.getElementById("code");
-          // var myCodeMirror = CodeMirror.fromTextArea(textarea, {
-          //   autoRefresh: true
-          // });
         }
       }
     });
 
 
     $("#run").click(function() {
-      var model_id = $("#modelselector").dropdown("get value");
-      var n_pos = $("#n_pos").val();
-      var data = {
-        model_id: model_id,
-        n_pos: n_pos
-      };
+      var data;
+
+      if ($("#chooser_mode").css("display")=="block") {
+        data = {
+          model_id: $("#modelselector").dropdown("get value"),
+          n_pos: $("#n_pos_chooser").val()
+        };
+
+      } else {
+        data = {
+          mysource: $("#mysource").children()[0].CodeMirror.getValue(),
+          n_pos: $("#n_pos_chooser").val()
+        };
+      }
 
       $.ajax({
         url: '{% url "run_backtest" %}',
@@ -83,9 +118,14 @@
         data: data,
         dataType: 'json',
         success: function(results) {
-          show_navs(results);
-          show_stats(results);
-          show_position(results);
+          if (results.error) {
+              alert(results.error);
+          } else {
+            show_navs(results);
+            show_stats(results);
+            show_position(results);
+            $("#results").css("display", "block")
+          }
         }
       });
 
@@ -135,8 +175,6 @@
             },
           }
       });
-
-      $("#cum_seg").css({"display":"block"});
     };
 
     function show_stats(results) {
@@ -175,8 +213,6 @@
             }
         });
       }
-
-      $("#stats_seg").css({"display":"block"});
     };
 
 
@@ -226,8 +262,6 @@
           }
         }
       });
-
-      $("#pos_seg").css({"display":"block"});
     }
 
 

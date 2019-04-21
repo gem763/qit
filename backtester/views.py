@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from backtester.utils import backtest, 매출상위, 매출상위다시, 시총상위PB저평가
+from backtester.utils import backtest, 매출상위, 매출상위다시, 시총상위PB저평가, get_fisyear
+# from backtester import utils
 import inspect
 
 
@@ -41,10 +42,21 @@ class GetSourceView(View):
 class RunBacktestView(View):
     def get(self, request):
         model_id = request.GET.get('model_id', None)
+        mysource = request.GET.get('mysource', None)
         n_pos = request.GET.get('n_pos', None)
 
-        if (model_id is not None) & (n_pos is not None):
-            model = model_matcher[int(model_id)]['model']
-            n_pos = int(n_pos)
-            results = get_results(model, n=n_pos)
-            return JsonResponse(results)
+        try:
+            if (model_id is not None) & (n_pos is not None):
+                model = model_matcher[int(model_id)]['model']
+                n_pos = int(n_pos)
+                results = get_results(model, n=n_pos)
+                return JsonResponse(results)
+
+            elif (mysource is not None) & (n_pos is not None):
+                exec(mysource, globals())
+                results = get_results(myModel, n=int(n_pos))
+                return JsonResponse(results)
+
+        except Exception as e:
+            print('**** error : ', e)
+            return JsonResponse({'error':str(e)})
