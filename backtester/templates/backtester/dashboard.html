@@ -43,13 +43,31 @@
       $("#mysource").empty();
       var where = document.getElementById("mysource");
       var myCodeMirror = CodeMirror(where, {
-        value: "# Type your code here\ndef myModel(date, fin=None, mc=None, n=10):\n    ",
+        value: "# Type your code here\n\ndef myModel(date, fin=None, mc=None, n=10):\n    ",
         // autoRefresh: true
       });
       myCodeMirror.focus();
       myCodeMirror.setCursor(myCodeMirror.lineCount(), 0);
+    });
 
-      // console.log(myCodeMirror.getValue());
+    $("#editcode").click(function() {
+      var source = $("#source").children()[0].CodeMirror.getValue();
+
+      $("#chooser").attr("class", "ui item");
+      $("#coder").attr("class", "ui item active");
+
+      $("#chooser_mode").css("display", "none");
+      $("#coder_mode").css("display", "block");
+
+      $("#results").css("display", "none");
+
+      $("#mysource").empty();
+      var where = document.getElementById("mysource");
+      var myCodeMirror = CodeMirror(where, {
+        value: source,
+      });
+      myCodeMirror.focus();
+      myCodeMirror.setCursor(myCodeMirror.lineCount(), 0);
     });
 
     $("#logo").mouseover(function() {
@@ -84,7 +102,7 @@
               var where = document.getElementById("source");
               var myCodeMirror = CodeMirror(where, {
                 value: data.source,
-                readOnly: 'nocursor',
+                readOnly: true, //'nocursor',
                 autoRefresh: true,
                 // lineNumbers: true
               });
@@ -99,6 +117,12 @@
       var data;
 
       if ($("#chooser_mode").css("display")=="block") {
+        if ($("#modelselector").dropdown("get value")=="") {
+          $("#error_content").text("모델을 선택해주세요");
+          $("#error").modal("show");
+          return false;
+        };
+
         data = {
           model_id: $("#modelselector").dropdown("get value"),
           n_pos: $("#n_pos_chooser").val()
@@ -107,7 +131,7 @@
       } else {
         data = {
           mysource: $("#mysource").children()[0].CodeMirror.getValue(),
-          n_pos: $("#n_pos_chooser").val()
+          n_pos: $("#n_pos_coder").val()
         };
       }
 
@@ -119,7 +143,8 @@
         dataType: 'json',
         success: function(results) {
           if (results.error) {
-              alert(results.error);
+              $("#error_content").text(results.error);
+              $("#error").modal("show");
           } else {
             show_navs(results);
             show_stats(results);

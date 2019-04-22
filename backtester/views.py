@@ -5,6 +5,8 @@ from django.urls import reverse
 from backtester.utils import backtest, 매출상위, 매출상위다시, 시총상위PB저평가, get_fisyear
 # from backtester import utils
 import inspect
+import traceback
+import re
 
 
 model_matcher = {
@@ -53,10 +55,13 @@ class RunBacktestView(View):
                 return JsonResponse(results)
 
             elif (mysource is not None) & (n_pos is not None):
+                fname = re.findall(r'def ([^ ]+)\(', mysource)[0]
                 exec(mysource, globals())
-                results = get_results(myModel, n=int(n_pos))
+                mymodel = globals()[fname]
+                results = get_results(mymodel, n=int(n_pos))
                 return JsonResponse(results)
 
         except Exception as e:
             print('**** error : ', e)
-            return JsonResponse({'error':str(e)})
+            return JsonResponse({'error':traceback.format_exc()})
+            # return JsonResponse({'error':str(e)})
