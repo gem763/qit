@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
 </head>
 
+{% load static %}
 <body style="background:whitesmoke">
   {% include "backtester/header.html" %}
   {% include "backtester/content.html" %}
@@ -17,8 +18,8 @@
   <!-- <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script> -->
   <script src="/static/semantic/semantic.min.js"></script>
   <script src="/static/codemirror/lib/codemirror.js"></script>
-  <script src="/static/codeMirror/mode/python/python.js"></script>
-  <script src="/static/codeMirror/addon/display/autorefresh.js"></script>
+  <script src="/static/codemirror/mode/python/python.js"></script>
+  <script src="/static/codemirror/addon/display/autorefresh.js"></script>
 
   <script>
     $("#chooser").click(function() {
