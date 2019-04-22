@@ -33,6 +33,7 @@
       $("#chooser_mode").css("display", "block");
       $("#coder_mode").css("display", "none");
 
+      $("#modelselector").dropdown("clear");
       $("#results").css("display", "none");
     });
 
@@ -214,7 +215,15 @@
       var stats_data = stats.data;
 
       for(var i=0; i<stats_names.length; i++) {
-        $("#"+stats_names[i]).empty();
+        // jquery로 select 하면 "Annual return"은 선택이 안된다...
+        var canvas = document.getElementById(stats_names[i]);
+        var parent = canvas.parentNode;
+        parent.removeChild(canvas);
+
+        canvas = document.createElement('canvas');
+        canvas.id = stats_names[i]
+        canvas.style = "max-width:90%;max-height:200px;margin-left:auto;margin-right:auto;"
+        parent.append(canvas);
 
         if (stats_names[i]=="Sharpe") {
           var _format = function(value) {
@@ -226,8 +235,7 @@
           }
         }
 
-        var ctx = document.getElementById(stats_names[i]).getContext("2d");
-        new Chart(ctx, {
+        new Chart(stats_names[i], {
             type: 'bar',
             plugins: [ChartDataLabels],
             data: {
@@ -267,6 +275,7 @@
               layout: {
                 padding: {
                   top: 20,
+                  // bottom: 50,
                 }
               },
               tooltips: {

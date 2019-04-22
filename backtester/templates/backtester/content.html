@@ -25,7 +25,7 @@
   }
 </style>
 
-<div class="ui text container segments" style="margin-top:100px;">
+<div class="ui text container segments" style="margin-top:100px;box-shadow: 0 0 10px rgba(0,0,0,0.2)">
 
   <div class="ui padded segment">
 
@@ -111,7 +111,7 @@
 
 
 
-<div class="ui text container segments" id="results" style="display:none;">
+<div class="ui text container segments" id="results" style="display:none;box-shadow: 0 0 10px rgba(0,0,0,0.2)">
 
   <div class="ui padded segment">
     <div class="ui header">Cumulative</div>
@@ -129,21 +129,27 @@
           <div class="ui small header">
             Annual return
           </div>
-          <canvas id="Annual return" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto"></canvas>
+          <div class="content">
+            <canvas id="Annual return" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto"></canvas>
+          </div>
         </div>
 
         <div class="column" style="text-align:center;">
           <div class="ui small header">
             Volatility
           </div>
-          <canvas id="Volatility" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto"></canvas>
+          <div class="content">
+            <canvas id="Volatility" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto"></canvas>
+          </div>
         </div>
 
         <div class="column" style="text-align:center;">
           <div class="ui small header">
             Sharpe
           </div>
-          <canvas id="Sharpe" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto;"></canvas>
+          <div class="content">
+            <canvas id="Sharpe" style="max-width:90%;max-height:200px;margin-left:auto;margin-right:auto;"></canvas>
+          </div>
         </div>
       </div>
 
