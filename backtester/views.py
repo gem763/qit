@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from backtester.utils import backtest, 매출상위, 매출상위다시, 시총상위PB저평가, get_fisyear
+from backtester.utils import backtest, 매출상위, 시총상위PB저평가, 슈퍼밸류, get_fisyear
 # from backtester import utils
 import inspect
 import traceback
@@ -11,8 +11,8 @@ import re
 
 model_matcher = {
     0: {'model':매출상위, 'desc':'매출액이 큰 종목'},
-    1: {'model':매출상위다시, 'desc':'매출액이 큰 종목2'},
-    2: {'model':시총상위PB저평가, 'desc':'시가총액 상위종목 중 PBR이 낮은 종목'},
+    1: {'model':시총상위PB저평가, 'desc':'시가총액 상위종목 중 PBR이 낮은 종목'},
+    2: {'model':슈퍼밸류, 'desc':'순익,자본,OCF,EBITDA,배당>0 이면서 PER,PBR,PCR,PSR,EV/EBITDA가 낮은 종목'},
 }
 
 

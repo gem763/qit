@@ -13,7 +13,7 @@ mc = pd.read_pickle(mc_path)
 
 
 def backtest(model, n):
-    bt = Backtest(strat=model, bm=BM, fin=fin, mc=mc, info=info, n=n)
+    bt = Backtest(model=model, bm=BM, fin=fin, mc=mc, info=info, n=n)
     bt.run()
     return bt
 
@@ -31,17 +31,11 @@ def get_fisyear(date):
 
 def 매출상위(date, fin=None, mc=None, n=10):
     fisyear = get_fisyear(date)
-    position = fin['매출액'].xs(fisyear, level=1).nlargest(n)
-    position[:] = 1/len(position)
-    return position
-
-
-def 매출상위다시(date, fin=None, mc=None, n=10):
-    fisyear = get_fisyear(date)
     univ = mc.columns[mc.loc[date]>0]
     position = fin['매출액'].xs(fisyear, level=1).loc[univ].nlargest(n)
     position[:] = 1/len(position)
     return position
+
 
 def 시총상위PB저평가(date, fin=None, mc=None, n=10):
     fisyear = get_fisyear(date)
@@ -54,6 +48,38 @@ def 시총상위PB저평가(date, fin=None, mc=None, n=10):
     return position
 
 
+def 슈퍼밸류(date, fin=None, mc=None, n=10):
+    fisyear = get_fisyear(date)
+    marketcap = mc.loc[date].nlargest(100)
+    univ = marketcap.index
+    _ni = fin['순익(단순)'].xs(fisyear, level=1)>0
+    _bv = fin['자본총계'].xs(fisyear, level=1)>0
+    _ocf = fin['영활현흐'].xs(fisyear, level=1)>0
+    _ebitda = fin['EBITDA'].xs(fisyear, level=1)>0
+    _dvd = fin['DPS'].xs(fisyear, level=1)>0
+    screen = (_ni & _bv & _ocf & _ebitda & _dvd).loc[univ]
+    univ = screen.index[screen]
+    marketcap = marketcap.loc[univ]
+    ni = fin['순익(단순)'].xs(fisyear, level=1).loc[univ]
+    bv = fin['자본총계'].xs(fisyear, level=1).loc[univ]
+    ocf = fin['영활현흐'].xs(fisyear, level=1).loc[univ]
+    sales = fin['매출액'].xs(fisyear, level=1).loc[univ]
+    ebitda = fin['EBITDA'].xs(fisyear, level=1).loc[univ]
+    ev = fin['EV'].xs(fisyear, level=1).loc[univ]
+
+    r_per = (ni/marketcap).rank()
+    r_pbr = (bv/marketcap).rank()
+    r_pcr = (ocf/marketcap).rank()
+    r_psr = (sales/marketcap).rank()
+    r_ee = (ebitda/ev).rank()
+
+    r_total = r_per + r_pbr + r_pcr + r_psr + r_ee
+    position = r_total.nlargest(n)
+    position[:] = 1/len(position)
+
+    return position
+
+
 def BM(date, fin=None, mc=None, n=200):
     position = mc.loc[date].nlargest(n)
     position /= position.sum()
@@ -62,8 +88,8 @@ def BM(date, fin=None, mc=None, n=200):
 
 
 class Backtest:
-    def __init__(self, strat=None, bm=None, fin=None, mc=None, info=None, n=10):
-        self.strat = strat
+    def __init__(self, model=None, bm=None, fin=None, mc=None, info=None, n=10):
+        self.model = model
         self.bm = bm
         self.fin = fin
         self.mc = mc
@@ -78,7 +104,7 @@ class Backtest:
         nav_bm = {}
 
         for i,date in enumerate(dates):
-            pos[date] = self.strat(date, fin=self.fin, mc=self.mc, n=self.n)
+            pos[date] = self.model(date, fin=self.fin, mc=self.mc, n=self.n)
             pos_bm[date] = self.bm(date, fin=self.fin, mc=self.mc)
 
             if i==0:
@@ -116,8 +142,8 @@ class Backtest:
         vol = _navs.pct_change().std() * 4**0.5
         return pd.DataFrame({'Annual return':ann_rtn, 'Volatility':vol, 'Sharpe':ann_rtn/vol})
 
-    def position(self, date=None, what='strat'):
-        if what=='strat':
+    def position(self, date=None, what='model'):
+        if what=='model':
             pos = self.pos
         elif what=='bm':
             pos = self.pos_bm
@@ -129,5 +155,4 @@ class Backtest:
 
     def position_mapped(self):
         pos_kr = self.position().rename(columns=self.info['name'].to_dict())*100
-        # print(pos_kr)
         return {str(k.date()):pos_kr.loc[k].dropna().to_dict() for k in pos_kr.index}
