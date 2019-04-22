@@ -15,6 +15,8 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.5/chartjs-plugin-annotation.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.5.0"></script>
   <!-- <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script> -->
   <script src="/static/semantic/semantic.min.js"></script>
   <script src="/static/codemirror/lib/codemirror.js"></script>
@@ -22,6 +24,8 @@
   <script src="/static/codemirror/addon/display/autorefresh.js"></script>
 
   <script>
+    Chart.plugins.unregister(ChartDataLabels);
+
     $("#chooser").click(function() {
       $("#chooser").attr("class", "ui item active");
       $("#coder").attr("class", "ui item");
@@ -158,7 +162,7 @@
     });
 
     function show_navs(results) {
-      new Chart('nav', {
+      var chart = new Chart('nav', {
           type: 'line',
           data: {
             labels: results.dates,
@@ -210,8 +214,22 @@
       var stats_data = stats.data;
 
       for(var i=0; i<stats_names.length; i++) {
-        new Chart(stats_names[i], {
+        $("#"+stats_names[i]).empty();
+
+        if (stats_names[i]=="Sharpe") {
+          var _format = function(value) {
+            return value.toFixed(3);
+            }
+        } else {
+          var _format = function(value) {
+            return (value*100).toFixed(1) + "%";
+          }
+        }
+
+        var ctx = document.getElementById(stats_names[i]).getContext("2d");
+        new Chart(ctx, {
             type: 'bar',
+            plugins: [ChartDataLabels],
             data: {
               labels: strats,
               datasets: [{
@@ -221,13 +239,23 @@
               }],
             },
             options: {
+              // responsive: true,
+              plugins: {
+                datalabels: {
+                  anchor: "end",
+                  align: "end",
+                  formatter: _format
+                }
+              },
               scales: {
                 xAxes: [{
+                  display: false,
                   gridLines: { display: false },
                 }],
                 yAxes: [{
                   ticks: {
-                    min: 0,
+                    // min: 0,
+                    beginAtZero: true,
                   },
                   display: false,
                   gridLines: { display: false },
@@ -236,6 +264,26 @@
               legend: {
                 display: false,
               },
+              layout: {
+                padding: {
+                  top: 20,
+                }
+              },
+              tooltips: {
+                enabled: false,
+              },
+              annotation: {
+                annotations: [{
+                  drawTime: "afterDatasetsDraw",
+                  id: "hline",
+                  type: "line",
+                  mode: "horizontal",
+                  scaleID: "y-axis-0",
+                  value: 0,
+                  borderColor: "silver",
+                  borderWidth: 1,
+                }]
+              }
             }
         });
       }
