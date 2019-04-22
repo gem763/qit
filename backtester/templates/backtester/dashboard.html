@@ -49,7 +49,7 @@
       $("#mysource").empty();
       var where = document.getElementById("mysource");
       var myCodeMirror = CodeMirror(where, {
-        value: "# import pandas as pd\n# import numpy as np\n# 그 밖에 (설치가 필요없는) 기본모듈을 import해서 쓰면 된다\n# 추가로 사용가능 함수: get_fisyear\n\ndef myModel(date, fin=None, mc=None, n=10):\n    # Type your code here\n    return position # pd.Series",
+        value: "# import pandas as pd\n# import numpy as np\n# 그 밖에 (설치가 필요없는) 기본모듈을 import해서 쓰면 된다\n# 추가로 사용가능 함수: get_fisyear\n\ndef myModel(date, fin=None, mc=None, n=10):\n    # Type your code here\n    # fisyear = get_fisyear(date)\n    return position # pd.Series",
         // autoRefresh: true
       });
       myCodeMirror.focus();
